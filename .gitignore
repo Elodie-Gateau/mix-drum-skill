@@ -218,3 +218,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- Projet mix batterie : jamais d'audio ni de données perso dans le repo ----
+*.wav
+*.mp3
+*.aif
+*.aiff
+*.flac
+*.m4a
+*.logicx
+DrumMix/
+profile.yaml
+.venv/
+.DS_Store

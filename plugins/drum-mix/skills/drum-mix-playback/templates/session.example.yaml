@@ -1,0 +1,13 @@
+# One per song, created by Claude from the conversation:
+# ~/Music/DrumMix/sessions/<date> <title>/session.yaml
+song: "Song title"
+reference: original.wav
+playback: playback.wav
+style: daptone
+
+notes:
+  - "very loud rimshots in the chorus (peaks)"
+  - "important ghost notes in the verse"
+preserve: "hi-hat swing"
+
+adjustments: []             # e.g. "v2: snare +1.5 dB"

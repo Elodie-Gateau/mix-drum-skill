@@ -1,0 +1,32 @@
+# Drummer hardware profile, filled once (by Claude, by interviewing the drummer).
+# Lives in ~/Music/DrumMix/profile.yaml — never in this repo. Values below are examples.
+
+studio:
+  mac: "MacBook Pro M3"
+  macos: "27.2"
+  logic_pro: "11.2"
+  audio_interface: "Focusrite Scarlett 18i20 (3rd gen)"
+  sample_rate: 48000        # must match the playback
+  monitoring: "Beyerdynamic DT 770 headphones"
+
+mics:
+  kick:     { model: "AKG D112",         placement: "inside the shell, 5 cm from the head" }
+  snare:    { model: "Shure SM57",       placement: "5 cm above the rim" }
+  overheads: { model: "Rode NT5 (pair)",  placement: "Recorderman, 90 cm" }
+
+kit:
+  brand: "Ludwig"
+  kick: "22 x 14, Powerstroke 3 head, pillow"
+  snare: "14 x 5, steel, medium tuning"
+  toms: ["12", "16"]
+  cymbals: "Zildjian K, ride 20, crash 18"
+room: "living room 4 x 5 m, lightly treated"
+
+calibration:                # filled automatically by the analysis
+  kick_delay_samples: null
+  snare_delay_samples: null
+  snare_resonances_hz: []
+
+preferences:                # grows over time from feedback
+  default_style: daptone
+  notes: []

@@ -1,0 +1,7 @@
+numpy
+soundfile
+pyloudnorm
+pyyaml
+# Ajoutés aux étapes suivantes :
+# pedalboard
+# librosa

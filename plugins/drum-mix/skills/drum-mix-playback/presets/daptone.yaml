@@ -1,0 +1,43 @@
+# Vintage, dry, damped drums, forward mids. Starting values, to refine by ear.
+# Sound processing only: no quantize, no gate, expander off.
+
+name: daptone
+description: "Dry, damped vintage drums, rolled-off highs, near-mono image, tape saturation."
+
+global:
+  reverb: none
+  overheads_image: mono     # or ±25 % pan
+  bandwidth_hz: [45, 10000]
+
+tracks:
+  kick:
+    highpass_hz: 50
+    peaks: [{ freq_hz: 95, gain_db: 4, q: 1.0 }, { freq_hz: 380, gain_db: -3, q: 1.5 }]
+    click: reduced
+    compressor: { ratio: 4, attack_ms: 15, release_ms: 120 }
+    pan: 0
+
+  snare:
+    highpass_hz: 100
+    peaks: [{ freq_hz: 200, gain_db: 1.5, q: 1.0 }, { freq_hz: 2200, gain_db: 3, q: 1.2 }]
+    lowpass_hz: 9000
+    compressor: { ratio: 5, attack_ms: 5, release_ms: 100 }
+    pan: 0
+    resonance_cuts: auto    # from analysis + profile
+
+  overheads:
+    highpass_hz: 200
+    peaks: [{ freq_hz: 200, gain_db: -2, q: 0.8 }]
+    lowpass_hz: 9000
+    level: low
+    pan: mono
+
+drum_bus:
+  parallel_compression: { below_drums_db: 8 }
+  glue: { type: fet, ratio: 4, release: fast, max_reduction_db: 3 }
+  saturation: { type: tape, drive: light }
+
+playback:
+  drums_below_playback_lu: [3, 5]
+
+expander: off

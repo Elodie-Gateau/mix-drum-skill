@@ -1,0 +1,13 @@
+{
+  "name": "mix-drum-skill",
+  "owner": {
+    "name": "Elodie Gateau"
+  },
+  "plugins": [
+    {
+      "name": "drum-mix",
+      "source": "./plugins/drum-mix",
+      "description": "Mix and master multitrack drums over a playback, vintage Daptone sound by default."
+    }
+  ]
+}
