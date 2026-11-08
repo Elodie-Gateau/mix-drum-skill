@@ -78,6 +78,9 @@ Si le batteur exprime un goût durable (« j'aime toujours une caisse claire pr�
 
 Rappelle que tu mesures sans écouter : c'est l'oreille du batteur qui tranche.
 
+## Template Logic
+Si le batteur veut créer ou refaire son template d'enregistrement, guide-le pas à pas avec `templates/logic-recording-guide.md`, adapté à `profile.yaml` (entrées, micros statiques → alimentation fantôme). Une étape à la fois, et demande une capture d'écran si un menu ne correspond pas.
+
 ## Export à demander depuis Logic
 *Fichier > Exporter > Toutes les pistes en tant que fichiers audio* : WAV 24 bits, **48 kHz** (même fréquence que le playback), effets désactivés, normalisation désactivée, toutes les pistes démarrant au même point (mesure 1). Demander aussi l'original pour vérifier vitesse et tonalité.
 
