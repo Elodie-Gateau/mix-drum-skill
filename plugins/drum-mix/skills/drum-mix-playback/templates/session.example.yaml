@@ -1,5 +1,5 @@
 # One per song, created by Claude from the conversation:
-# ~/Music/DrumMix/sessions/<date> <title>/session.yaml
+# <output folder>/<date> <title>/session.yaml
 song: "Song title"
 reference: original.wav
 playback: playback.wav

@@ -13,25 +13,25 @@ Seul le **son** change, jamais la **performance**.
 - **Autorisé :** EQ, compression douce, saturation, panoramique, niveaux, réverb, et un retard fixe de quelques échantillons, identique sur toute la piste (alignement de phase).
 - **Contrôle à chaque rendu :** même nombre de coups, mêmes positions (à ±1 ms), même durée que les pistes d'origine. En cas d'écart, ne livre pas le fichier et explique pourquoi.
 
-## Dossier de travail
-Tout se passe dans `~/Music/DrumMix/` (le dossier Musique du Mac). Crée-le s'il n'existe pas :
-```
-DrumMix/
-├── profile.yaml            ← matériel et goûts du batteur (modèle : templates/profile.example.yaml)
-├── journal.md              ← ce qui a plu ou non, session après session
-└── sessions/<date> <titre>/
-    ├── tracks/             ← exports Logic + playback.wav + original.wav
-    ├── session.yaml        ← style, particularités, ajustements (modèle : templates/session.example.yaml)
-    └── renders/            ← seul endroit où tu écris de l'audio
-```
-Ne modifie jamais un fichier de `tracks/`.
+## Dossiers
+Le batteur choisit ses dossiers avec des fenêtres du Finder. Ne lui demande jamais de taper un chemin.
+
+- **Dossier d'entrée** (les pistes) : lance `python scripts/folders.py input`. Il contient les exports Logic, `playback.wav` et, si possible, `original.wav`. **Lecture seule** : n'y modifie jamais rien.
+- **Dossier de sortie** (les rendus) : lance `python scripts/folders.py output`. C'est le seul endroit où tu écris : rendus audio, rapport et `session.yaml`.
+- Chaque script affiche le chemin choisi, ou `canceled` si le batteur annule. En cas d'annulation, demande-lui ce qu'il veut faire.
+- Ces fenêtres n'existent que si tu tournes sur son Mac. Sinon, travaille avec les fichiers déposés dans la conversation.
+
+Dans le dossier de sortie, crée un sous-dossier par morceau : `<date> <titre>/` contenant `session.yaml`, les rendus (`<titre>_v1_daptone.wav`/`.mp3`, `<titre>_v1_drums-only.wav`…) et `<titre>_v1_report.md`.
+
+Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, avec `~/Music/DrumMix/journal.md`. Crée ce dossier s'il n'existe pas.
 
 **Le batteur ne remplit jamais de YAML lui-même.** C'est toi qui crées et mets à jour `profile.yaml` et `session.yaml` à partir de la conversation. Il parle, tu écris.
 
 ## Démarrage
 1. **Première fois seulement** : si `profile.yaml` n'existe pas, pose les questions du modèle (carte son, micros et placement, batterie, pièce, version de Logic, écoute), une ou deux à la fois, puis crée le fichier. Ensuite, ne repose ces questions que si le matériel change.
-2. **À chaque morceau** : crée le dossier de session et `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
-3. Mesure les fichiers avec `scripts/track_info.py` avant tout traitement.
+2. **À chaque morceau** : ouvre la fenêtre du dossier d'entrée, puis celle du dossier de sortie. Si le batteur a déjà indiqué les dossiers dans son message, utilise-les sans rouvrir les fenêtres.
+3. Crée `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
+4. Mesure les fichiers avec `python scripts/track_info.py <dossier d'entrée>` avant tout traitement.
 
 ## 1. Contrôles avant tout mix
 - **Identifier les pistes par leur spectre**, sans se fier aux noms (« Audio_1 »…) :
@@ -69,7 +69,7 @@ Pré-master sans limiteur (crêtes à −6 dBFS, float), puis :
 Livre en WAV 24 bits et MP3 320 kbps (ffmpeg), plus la réduction de gain du limiteur (moyenne et maximum).
 
 ## 5. Livraison et apprentissage
-Dépose les fichiers dans `renders/` puis réponds brièvement :
+Dépose les fichiers dans le dossier de sortie puis réponds brièvement :
 - **le diagnostic** : les mesures qui expliquent le problème ;
 - **les réglages Logic piste par piste** (Sample Delay, Channel EQ, compresseur, panoramiques, niveaux) si demandés ;
 - **une option à essayer ensuite**.

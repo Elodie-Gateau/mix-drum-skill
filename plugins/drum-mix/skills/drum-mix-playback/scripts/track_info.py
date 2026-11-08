@@ -1,6 +1,7 @@
 """Print basic info for WAV files: sample rate, format, duration, peak, loudness.
 
 Usage:
+    python track_info.py                  # opens a folder dialog
     python track_info.py track1.wav track2.wav ...
     python track_info.py tracks_folder/
 
@@ -13,6 +14,8 @@ from pathlib import Path
 import numpy as np
 import pyloudnorm as pyln
 import soundfile as sf
+
+from folders import choose_input_folder
 
 MIN_LOUDNESS_DURATION_S = 0.4
 CLIP_THRESHOLD = 0.999
@@ -55,9 +58,17 @@ def find_wav_files(args: list[str]) -> list[Path]:
 
 
 def main() -> int:
-    files = find_wav_files(sys.argv[1:])
+    args = sys.argv[1:]
+    if not args:
+        folder = choose_input_folder(Path("~/Music"))
+        if folder is None:
+            print("Canceled.")
+            return 1
+        args = [str(folder)]
+
+    files = find_wav_files(args)
     if not files:
-        print(__doc__)
+        print(f"No WAV files found in: {', '.join(args)}")
         return 1
 
     for path in files:
