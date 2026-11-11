@@ -1,5 +1,7 @@
 """Native macOS folder pickers for choosing the input tracks and the render destination."""
 
+from __future__ import annotations  # macOS ships Python 3.9: keep `Path | None` hints working
+
 import shutil
 import subprocess
 from pathlib import Path
@@ -33,11 +35,11 @@ def choose_folder(prompt: str, default: Path | None = None) -> Path | None:
 
 
 def choose_input_folder(default: Path | None = None) -> Path | None:
-    return choose_folder("Choose the folder containing the tracks to mix", default)
+    return choose_folder("Choisis le dossier où tu as exporté tes pistes", default)
 
 
 def choose_output_folder(default: Path | None = None) -> Path | None:
-    return choose_folder("Choose where to save the renders", default)
+    return choose_folder("Choisis où ranger les mix", default)
 
 
 if __name__ == "__main__":

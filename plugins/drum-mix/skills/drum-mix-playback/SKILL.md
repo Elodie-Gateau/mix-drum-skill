@@ -14,12 +14,17 @@ Seul le **son** change, jamais la **performance**.
 - **Contrôle à chaque rendu :** même nombre de coups, mêmes positions (à ±1 ms), même durée que les pistes d'origine. En cas d'écart, ne livre pas le fichier et explique pourquoi.
 
 ## Dossiers
-Le batteur choisit ses dossiers avec des fenêtres du Finder. Ne lui demande jamais de taper un chemin.
+Le batteur n'est pas développeur : il choisit ses dossiers **en cliquant dans une fenêtre de sélection**. Ne lui demande jamais de taper ou coller un chemin, et **ne devine jamais de dossier** (pas de `~/Music/…` ou autre chemin « par défaut » proposé à sa place).
 
-- **Dossier d'entrée** (les pistes) : lance `python scripts/folders.py input`. Il contient les exports Logic, `playback.wav` et, si possible, `original.wav`. **Lecture seule** : n'y modifie jamais rien.
-- **Dossier de sortie** (les rendus) : lance `python scripts/folders.py output`. C'est le seul endroit où tu écris : rendus audio, `session.yaml` et, une fois le mix validé, le rapport.
-- Chaque script affiche le chemin choisi, ou `canceled` si le batteur annule. En cas d'annulation, demande-lui ce qu'il veut faire.
-- Ces fenêtres n'existent que si tu tournes sur son Mac. Sinon, travaille avec les fichiers déposés dans la conversation.
+- **Dossier d'entrée** (les pistes) : celui où il a exporté ses pistes depuis Logic. Il contient les exports, `playback.wav` et, si possible, `original.wav`. **Lecture seule** : n'y modifie jamais rien.
+- **Dossier de sortie** (les rendus) : le seul endroit où tu écris : rendus audio, `session.yaml` et, une fois le mix validé, le rapport.
+
+**Comment ouvrir la fenêtre de sélection**, selon l'endroit où tu tournes :
+1. **Tu as un outil pour demander l'accès à un dossier de son ordinateur** (app Claude / Cowork) : appelle-le **sans indiquer de chemin**, pour qu'il ouvre la fenêtre de sélection et que le batteur clique sur son dossier. Ne lui propose jamais un chemin à autoriser.
+2. **Tu tournes directement sur son Mac** (Claude Code) : lance `python3 "<dossier de ce skill>/scripts/folders.py" input`, puis `… output`, avec le **chemin absolu** du dossier de ce skill (indiqué au chargement du skill), pas un chemin relatif. Le script affiche le dossier choisi, ou `canceled`.
+3. **Aucun des deux** : demande-lui de glisser-déposer ses fichiers audio dans la conversation.
+
+Avant d'ouvrir la fenêtre, dis-lui en une phrase ce qu'il doit choisir (« Une fenêtre va s'ouvrir : choisis le dossier où tu as exporté tes pistes depuis Logic »). S'il annule, ou si la fenêtre ne s'ouvre pas, ne bascule pas sur un chemin inventé : demande-lui simplement s'il veut réessayer ou déposer les fichiers.
 
 Dans le dossier de sortie, crée un sous-dossier par morceau : `<date> <titre>/` contenant `session.yaml`, les rendus (`<titre>_v1_daptone.wav`/`.mp3`, `<titre>_v1_drums-only.wav`…) et, seulement quand le batteur valide une version, `<titre>_report.md` (voir section 6).
 
@@ -29,7 +34,7 @@ Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, ave
 
 ## Démarrage
 1. **Première fois seulement** : si `profile.yaml` n'existe pas, pose les questions du modèle (carte son, micros et placement, batterie, pièce, version de Logic, écoute), une ou deux à la fois, puis crée le fichier. Ensuite, ne repose ces questions que si le matériel change.
-2. **À chaque morceau** : ouvre la fenêtre du dossier d'entrée, puis celle du dossier de sortie. Si le batteur a déjà indiqué les dossiers dans son message, utilise-les sans rouvrir les fenêtres.
+2. **À chaque morceau** (« mixe le morceau ») : ouvre tout de suite la fenêtre de sélection du dossier d'entrée, puis celle du dossier de sortie (voir « Dossiers »). Si le batteur a déjà donné ses dossiers dans son message, utilise-les sans rouvrir les fenêtres. Le dossier de sortie choisi la première fois peut être réutilisé ensuite : propose-le (« Je range le mix au même endroit que la dernière fois ? ») et note-le dans `profile.yaml` (`studio.output_folder`).
 3. Relis `preferences` dans `profile.yaml` (voir « Apprendre des retours ») : ces goûts appris s'appliquent par défaut à ce nouveau mix, par-dessus le preset.
 4. Crée `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
 5. Mesure les fichiers avec `python scripts/track_info.py <dossier d'entrée>` avant tout traitement.
