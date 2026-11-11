@@ -27,6 +27,18 @@ calibration:                # filled automatically by the analysis
   snare_delay_samples: null
   snare_resonances_hz: []
 
-preferences:                # grows over time from feedback
+preferences:                # grows over time from the drummer's feedback (Claude writes it)
   default_style: daptone
-  notes: []
+  learned:                  # applied by default to every new mix, on top of the preset
+    - id: snare-crack
+      said: "plus de claquant sur la caisse claire"      # the drummer's own words
+      setting: "snare: +2 dB at 3 kHz (Q 1.0)"           # concrete translation
+      since: "2026-11-11"
+      songs: ["Song title"]
+      confirmations: 1      # +1 each time the same taste comes back on another song
+    - id: less-reverb
+      said: "trop de réverb"
+      setting: "room reverb send: -3 dB"
+      since: "2026-11-11"
+      songs: ["Song title"]
+      confirmations: 1

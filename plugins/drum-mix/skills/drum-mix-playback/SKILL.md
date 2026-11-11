@@ -17,11 +17,11 @@ Seul le **son** change, jamais la **performance**.
 Le batteur choisit ses dossiers avec des fenêtres du Finder. Ne lui demande jamais de taper un chemin.
 
 - **Dossier d'entrée** (les pistes) : lance `python scripts/folders.py input`. Il contient les exports Logic, `playback.wav` et, si possible, `original.wav`. **Lecture seule** : n'y modifie jamais rien.
-- **Dossier de sortie** (les rendus) : lance `python scripts/folders.py output`. C'est le seul endroit où tu écris : rendus audio, rapport et `session.yaml`.
+- **Dossier de sortie** (les rendus) : lance `python scripts/folders.py output`. C'est le seul endroit où tu écris : rendus audio, `session.yaml` et, une fois le mix validé, le rapport.
 - Chaque script affiche le chemin choisi, ou `canceled` si le batteur annule. En cas d'annulation, demande-lui ce qu'il veut faire.
 - Ces fenêtres n'existent que si tu tournes sur son Mac. Sinon, travaille avec les fichiers déposés dans la conversation.
 
-Dans le dossier de sortie, crée un sous-dossier par morceau : `<date> <titre>/` contenant `session.yaml`, les rendus (`<titre>_v1_daptone.wav`/`.mp3`, `<titre>_v1_drums-only.wav`…) et `<titre>_v1_report.md`.
+Dans le dossier de sortie, crée un sous-dossier par morceau : `<date> <titre>/` contenant `session.yaml`, les rendus (`<titre>_v1_daptone.wav`/`.mp3`, `<titre>_v1_drums-only.wav`…) et, seulement quand le batteur valide une version, `<titre>_report.md` (voir section 6).
 
 Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, avec `~/Music/DrumMix/journal.md`. Crée ce dossier s'il n'existe pas.
 
@@ -30,8 +30,9 @@ Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, ave
 ## Démarrage
 1. **Première fois seulement** : si `profile.yaml` n'existe pas, pose les questions du modèle (carte son, micros et placement, batterie, pièce, version de Logic, écoute), une ou deux à la fois, puis crée le fichier. Ensuite, ne repose ces questions que si le matériel change.
 2. **À chaque morceau** : ouvre la fenêtre du dossier d'entrée, puis celle du dossier de sortie. Si le batteur a déjà indiqué les dossiers dans son message, utilise-les sans rouvrir les fenêtres.
-3. Crée `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
-4. Mesure les fichiers avec `python scripts/track_info.py <dossier d'entrée>` avant tout traitement.
+3. Relis `preferences` dans `profile.yaml` (voir « Apprendre des retours ») : ces goûts appris s'appliquent par défaut à ce nouveau mix, par-dessus le preset.
+4. Crée `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
+5. Mesure les fichiers avec `python scripts/track_info.py <dossier d'entrée>` avant tout traitement.
 
 ## 1. Contrôles avant tout mix
 - **Identifier les pistes par leur spectre**, sans se fier aux noms (« Audio_1 »…) :
@@ -46,7 +47,7 @@ Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, ave
 - **Signaler les crêtes** inhabituelles (rimshots, clipping) avant de compresser.
 
 ## 2. Mix (bibliothèque `pedalboard`)
-Les réglages viennent du preset choisi (`presets/*.yaml`), ajustés avec le profil matériel. Ordre de grandeur :
+Les réglages viennent du preset choisi (`presets/*.yaml`), ajustés avec le profil matériel, puis avec les goûts appris (`preferences.learned` du profil). Ordre de grandeur :
 - **Grosse caisse :** coupe-bas, creux vers 380 Hz, compresseur 4:1.
 - **Caisse claire :** coupe-bas 90–120 Hz, coupe des résonances, présence, compresseur 4 à 6:1 (attaque 4–6 ms).
 - **Overheads :** coupe-bas 140–250 Hz, coupe des résonances et de la bosse de pièce vers 200 Hz.
@@ -54,8 +55,8 @@ Les réglages viennent du preset choisi (`presets/*.yaml`), ajustés avec le pro
 - **Playback Moises :** souvent sourd (rien au-dessus de 14 kHz) et quasi mono. Filtre le haut de la batterie, resserre les overheads, baisse la batterie de 3 à 5 LU sous le playback. Ne remonte pas les aigus du playback (ça révèle les artefacts).
 - **Comparaisons :** rends toujours les versions **à volume égal** (même LUFS). Livre aussi la batterie seule.
 
-## 3. Ajustements demandés par l'utilisateur
-Quand l'utilisateur dit « un peu plus de caisse claire », précise si c'est du **niveau**, du **corps** (~200 Hz) ou du **claquant** (2–4 kHz). Traduis en réglage, note-le dans `session.yaml` (champ `adjustments`), ne relance que mix + master, et livre la nouvelle version **à côté** de la précédente (v1, v2…), à volume égal.
+## 3. Retours du batteur (« fais plus ci, moins ça »)
+Quand le batteur dit « un peu plus de caisse claire », précise si c'est du **niveau**, du **corps** (~200 Hz) ou du **claquant** (2–4 kHz) — une seule question, et seulement si c'est vraiment ambigu. Traduis en réglage, note-le dans `session.yaml` (champ `adjustments`), ne relance que mix + master, et range la nouvelle version **à côté** de la précédente (v1, v2…), à volume égal. Puis **mémorise le retour** (voir « Apprendre des retours »).
 
 ## 4. Master
 Pré-master sans limiteur (crêtes à −6 dBFS, float), puis :
@@ -66,17 +67,42 @@ Pré-master sans limiteur (crêtes à −6 dBFS, float), puis :
 5. limiteur à anticipation (détection suréchantillonnée ×4) jusqu'à **−14 LUFS intégrés, crêtes ≤ −1 dBTP** ;
 6. fondu de 2 s si l'extrait s'arrête net.
 
-Livre en WAV 24 bits et MP3 320 kbps (ffmpeg), plus la réduction de gain du limiteur (moyenne et maximum).
+Rends en WAV 24 bits et MP3 320 kbps (ffmpeg). Note la réduction de gain du limiteur (moyenne et maximum) dans `session.yaml` : elle servira au rapport final.
 
-## 5. Livraison et apprentissage
-Dépose les fichiers dans le dossier de sortie puis réponds brièvement :
-- **le diagnostic** : les mesures qui expliquent le problème ;
-- **les réglages Logic piste par piste** (Sample Delay, Channel EQ, compresseur, panoramiques, niveaux) si demandés ;
-- **une option à essayer ensuite**.
+## 5. Livraison : uniquement le MP3 final
+Quand le batteur demande son mix, il veut **un seul fichier : le MP3 final, mixé et masterisé**. C'est la version qui compte.
 
-Si le batteur exprime un goût durable (« j'aime toujours une caisse claire présente »), propose de l'ajouter à `preferences` dans `profile.yaml` et note la session dans `journal.md`.
+- Range tout dans le dossier de sortie comme d'habitude (WAV 24 bits, batterie seule, pistes solo traitées, pré-master, `session.yaml`), mais **ne les présente pas** dans la réponse.
+- Dans la réponse, donne **uniquement le MP3 final** (`<titre>_vN_<style>.mp3`) : son chemin et, si tu travailles dans la conversation (pas sur son Mac), le fichier joint. Rien d'autre en pièce jointe.
+- Accompagne-le d'un **diagnostic rapide** (3 à 5 puces courtes, sans chiffres superflus) pour qu'il sache ce que tu as modifié : les problèmes trouvés et ce que tu as fait (ex. « résonance de la caisse claire vers 340 Hz, qui vient du fût → coupée en EQ étroite », « grosse caisse en retard sur les overheads → recalée »), plus ce que tu as appliqué de ses goûts appris s'il y en a (« J'ai gardé la caisse claire plus claquante, comme tu aimes »). Pour une v2, v3…, ne liste que ce qui a changé depuis la version précédente.
+- Termine par une ligne du type : « Si tu veux les fichiers annexes (WAV, batterie seule, pistes solo, réglages Logic…), demande-les-moi. Sinon, ce MP3 est la version finale. Et si quelque chose ne te plaît pas, dis-moi simplement "plus de ci, moins de ça". »
+- Pas de mesures détaillées, pas de réglages Logic, sauf s'il les demande. Si un contrôle a échoué (règle d'or, vitesse du playback), explique-le en tête du diagnostic.
+- **Ne génère pas de rapport `.md` à ce stade** : il n'est écrit qu'à la validation (section 6).
 
-Rappelle que tu mesures sans écouter : c'est l'oreille du batteur qui tranche.
+S'il réclame les annexes, donne-lui ce qu'il demande depuis le dossier de sortie : WAV, batterie seule, pistes solo, mesures détaillées, ou **réglages Logic piste par piste** (Sample Delay, Channel EQ, compresseur, panoramiques, niveaux).
+
+## 6. Apprendre des retours
+Chaque retour du batteur sert aux mix suivants, pas seulement au morceau en cours. La mémoire, c'est `~/Music/DrumMix/profile.yaml` (champ `preferences.learned`) et `~/Music/DrumMix/journal.md`.
+
+**À chaque retour** (« plus de grosse caisse », « trop de réverb », « la caisse claire claque trop ») :
+1. Applique-le au morceau en cours (section 3).
+2. Décide de sa portée :
+   - **goût général** (« j'aime une grosse caisse plus ronde », la plupart des retours sur l'équilibre, la couleur, la réverb, la compression) → mémorise-le dans `preferences.learned` ;
+   - **propre au morceau** (« le rimshot du refrain est trop fort », un passage précis) → garde-le seulement dans `session.yaml`.
+   En cas de doute, considère-le comme général.
+3. Écris-le en réglage concret, pas seulement en mots : piste, paramètre, valeur (ex. `snare: +2 dB à 3 kHz`), avec ses mots à lui, la date et le morceau.
+4. Si un nouveau retour contredit ou affine un goût déjà mémorisé, **mets à jour** l'entrée existante au lieu d'en ajouter une (ex. « caisse claire +2 dB » puis « un peu moins » → +1 dB). Si le même goût revient sur plusieurs morceaux, augmente `confirmations` : c'est un goût solide.
+5. Dis-le-lui en une ligne : « Noté, je le garde pour les prochains mix. »
+
+**Quand il valide** (« c'est bon », « parfait ») :
+- génère alors **seulement** `<titre>_report.md` dans le sous-dossier du morceau, pour la version validée : diagnostic complet et mesures, réglages finaux piste par piste, réglages Logic, réduction de gain du limiteur, retours appliqués version par version, et une option à essayer pour un prochain morceau. **Ne le lui envoie pas** et ne le joins pas : dis-lui juste en une ligne qu'il est rangé dans le dossier s'il en a besoin ;
+- note dans `journal.md` le morceau, la version retenue et les réglages finaux. Une version validée sert de référence pour les morceaux suivants du même style.
+
+**Au début de chaque mix**, applique tous les goûts de `preferences.learned` au preset de départ, pour que la v1 soit déjà proche de ce qu'il aime. S'il demande « oublie ça » ou « reviens au son de base », retire l'entrée concernée.
+
+Si tu ne tournes pas sur son Mac et ne peux pas écrire dans `profile.yaml`, dis-le-lui et donne-lui en fin de réponse le bloc `preferences` mis à jour, pour qu'il le recolle la prochaine fois.
+
+Garde en tête que tu mesures sans écouter : c'est l'oreille du batteur qui tranche, et ses retours sont la meilleure source pour progresser.
 
 ## Template Logic
 Si le batteur veut créer ou refaire son template d'enregistrement, guide-le pas à pas avec `templates/logic-recording-guide.md`, adapté à `profile.yaml` (entrées, micros statiques → alimentation fantôme). Une étape à la fois, et demande une capture d'écran si un menu ne correspond pas.
