@@ -1,6 +1,6 @@
 ---
 name: drum-mix-playback
-description: Mixer et masteriser des pistes de batterie multipistes (grosse caisse, caisse claire, overheads) enregistrées dans Logic Pro sur un playback sans batterie (Moises), avec analyse, rendus WAV/MP3 et réglages Logic. Son vintage Daptone par défaut. À utiliser dès que l'utilisateur parle de mixer, masteriser ou régler le son de sa batterie.
+description: Mixer et masteriser des pistes de batterie multipistes (grosse caisse, caisse claire, overheads) enregistrées dans Logic Pro sur un playback sans batterie (Moises), avec analyse, rendu MP3 final (WAV et pistes sur demande) et réglages Logic. Son vintage Daptone par défaut. À utiliser dès que l'utilisateur parle de mixer, masteriser ou régler le son de sa batterie.
 ---
 
 # Mix batterie + playback
@@ -14,19 +14,20 @@ Seul le **son** change, jamais la **performance**.
 - **Contrôle à chaque rendu :** même nombre de coups, mêmes positions (à ±1 ms), même durée que les pistes d'origine. En cas d'écart, ne livre pas le fichier et explique pourquoi.
 
 ## Dossiers
-Le batteur n'est pas développeur : il choisit ses dossiers **en cliquant dans une fenêtre de sélection**. Ne lui demande jamais de taper ou coller un chemin, et **ne devine jamais de dossier** (pas de `~/Music/…` ou autre chemin « par défaut » proposé à sa place).
+**Dossier des pistes.** Quand le batteur demande un mix, commence par lui demander où sont les pistes, en une phrase : « Donne-moi le chemin du dossier où sont tes pistes, ou glisse tes fichiers directement dans la conversation. » N'ouvre aucune fenêtre de sélection, ne propose aucun chemin par défaut et ne devine rien. S'il a déjà donné le dossier ou déposé les fichiers dans son message, ne repose pas la question.
+- Le dossier contient les exports Logic, `playback.wav` et, si possible, `original.wav`.
+- **Ne modifie jamais ses fichiers** : tu ne fais que les lire.
 
-- **Dossier d'entrée** (les pistes) : celui où il a exporté ses pistes depuis Logic. Il contient les exports, `playback.wav` et, si possible, `original.wav`. **Lecture seule** : n'y modifie jamais rien.
-- **Dossier de sortie** (les rendus) : le seul endroit où tu écris : rendus audio, `session.yaml` et, une fois le mix validé, le rapport.
+**Dossier des résultats : `version mixée`.** Ne demande jamais au batteur où ranger le mix. Crée toi-même un dossier `version mixée` **dans le dossier des pistes qu'il t'a donné** (s'il existe déjà, réutilise-le). C'est le seul endroit où tu écris. Si les fichiers ont été déposés dans la conversation, crée `version mixée` dans ton espace de travail et joins le MP3 à ta réponse.
 
-**Comment ouvrir la fenêtre de sélection**, selon l'endroit où tu tournes :
-1. **Tu as un outil pour demander l'accès à un dossier de son ordinateur** (app Claude / Cowork) : appelle-le **sans indiquer de chemin**, pour qu'il ouvre la fenêtre de sélection et que le batteur clique sur son dossier. Ne lui propose jamais un chemin à autoriser.
-2. **Tu tournes directement sur son Mac** (Claude Code) : lance `python3 "<dossier de ce skill>/scripts/folders.py" input`, puis `… output`, avec le **chemin absolu** du dossier de ce skill (indiqué au chargement du skill), pas un chemin relatif. Le script affiche le dossier choisi, ou `canceled`.
-3. **Aucun des deux** : demande-lui de glisser-déposer ses fichiers audio dans la conversation.
+Dans `version mixée`, par défaut, il n'y a que :
+- le MP3 final : `<titre>_v1_<style>.mp3`, puis `_v2`, `_v3`… à chaque retour (les versions précédentes restent à côté) ;
+- `<titre>_report.md`, créé seulement quand le batteur valide une version (voir section 6) ;
+- `session.yaml` (tes notes de travail).
 
-Avant d'ouvrir la fenêtre, dis-lui en une phrase ce qu'il doit choisir (« Une fenêtre va s'ouvrir : choisis le dossier où tu as exporté tes pistes depuis Logic »). S'il annule, ou si la fenêtre ne s'ouvre pas, ne bascule pas sur un chemin inventé : demande-lui simplement s'il veut réessayer ou déposer les fichiers.
+**Tout le reste (WAV, batterie seule, pistes solo traitées, pré-master…) n'est généré que si le batteur le demande**, et rangé au même endroit.
 
-Dans le dossier de sortie, crée un sous-dossier par morceau : `<date> <titre>/` contenant `session.yaml`, les rendus (`<titre>_v1_daptone.wav`/`.mp3`, `<titre>_v1_drums-only.wav`…) et, seulement quand le batteur valide une version, `<titre>_report.md` (voir section 6).
+**Rappelle-lui toujours où sont les résultats** : chaque réponse qui livre un MP3 se termine par le chemin complet du dossier `version mixée`.
 
 Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, avec `~/Music/DrumMix/journal.md`. Crée ce dossier s'il n'existe pas.
 
@@ -34,10 +35,10 @@ Le profil matériel est unique pour ce Mac : `~/Music/DrumMix/profile.yaml`, ave
 
 ## Démarrage
 1. **Première fois seulement** : si `profile.yaml` n'existe pas, pose les questions du modèle (carte son, micros et placement, batterie, pièce, version de Logic, écoute), une ou deux à la fois, puis crée le fichier. Ensuite, ne repose ces questions que si le matériel change.
-2. **À chaque morceau** (« mixe le morceau ») : ouvre tout de suite la fenêtre de sélection du dossier d'entrée, puis celle du dossier de sortie (voir « Dossiers »). Si le batteur a déjà donné ses dossiers dans son message, utilise-les sans rouvrir les fenêtres. Le dossier de sortie choisi la première fois peut être réutilisé ensuite : propose-le (« Je range le mix au même endroit que la dernière fois ? ») et note-le dans `profile.yaml` (`studio.output_folder`).
+2. **À chaque morceau** (« mixe le morceau ») : demande-lui le chemin du dossier des pistes ou de déposer ses fichiers dans la conversation (voir « Dossiers »), puis crée `version mixée` dedans. Aucune autre question sur les dossiers.
 3. Relis `preferences` dans `profile.yaml` (voir « Apprendre des retours ») : ces goûts appris s'appliquent par défaut à ce nouveau mix, par-dessus le preset.
 4. Crée `session.yaml`. Style par défaut : celui du profil (`daptone`). Ne demande que ce qui manque : « Un style particulier ? Des choses à surveiller ? ». S'il dit juste « mixe », pars du défaut.
-5. Mesure les fichiers avec `python scripts/track_info.py <dossier d'entrée>` avant tout traitement.
+5. Mesure les fichiers avant tout traitement : `python3 "<dossier de ce skill>/scripts/track_info.py" "<dossier des pistes>"`, avec le chemin absolu du dossier de ce skill (indiqué au chargement du skill).
 
 ## 1. Contrôles avant tout mix
 - **Identifier les pistes par leur spectre**, sans se fier aux noms (« Audio_1 »…) :
@@ -58,7 +59,7 @@ Les réglages viennent du preset choisi (`presets/*.yaml`), ajustés avec le pro
 - **Overheads :** coupe-bas 140–250 Hz, coupe des résonances et de la bosse de pièce vers 200 Hz.
 - **Bus batterie :** compression parallèle environ 8 dB sous la batterie, puis compression de cohésion légère.
 - **Playback Moises :** souvent sourd (rien au-dessus de 14 kHz) et quasi mono. Filtre le haut de la batterie, resserre les overheads, baisse la batterie de 3 à 5 LU sous le playback. Ne remonte pas les aigus du playback (ça révèle les artefacts).
-- **Comparaisons :** rends toujours les versions **à volume égal** (même LUFS). Livre aussi la batterie seule.
+- **Comparaisons :** rends toujours les versions **à volume égal** (même LUFS). La batterie seule n'est rendue que sur demande.
 
 ## 3. Retours du batteur (« fais plus ci, moins ça »)
 Quand le batteur dit « un peu plus de caisse claire », précise si c'est du **niveau**, du **corps** (~200 Hz) ou du **claquant** (2–4 kHz) — une seule question, et seulement si c'est vraiment ambigu. Traduis en réglage, note-le dans `session.yaml` (champ `adjustments`), ne relance que mix + master, et range la nouvelle version **à côté** de la précédente (v1, v2…), à volume égal. Puis **mémorise le retour** (voir « Apprendre des retours »).
@@ -72,19 +73,20 @@ Pré-master sans limiteur (crêtes à −6 dBFS, float), puis :
 5. limiteur à anticipation (détection suréchantillonnée ×4) jusqu'à **−14 LUFS intégrés, crêtes ≤ −1 dBTP** ;
 6. fondu de 2 s si l'extrait s'arrête net.
 
-Rends en WAV 24 bits et MP3 320 kbps (ffmpeg). Note la réduction de gain du limiteur (moyenne et maximum) dans `session.yaml` : elle servira au rapport final.
+Exporte **uniquement le MP3 320 kbps** (ffmpeg) dans `version mixée`. Le WAV 24 bits n'est exporté que si le batteur le demande. Note la réduction de gain du limiteur (moyenne et maximum) dans `session.yaml` : elle servira au rapport final.
 
 ## 5. Livraison : uniquement le MP3 final
 Quand le batteur demande son mix, il veut **un seul fichier : le MP3 final, mixé et masterisé**. C'est la version qui compte.
 
-- Range tout dans le dossier de sortie comme d'habitude (WAV 24 bits, batterie seule, pistes solo traitées, pré-master, `session.yaml`), mais **ne les présente pas** dans la réponse.
-- Dans la réponse, donne **uniquement le MP3 final** (`<titre>_vN_<style>.mp3`) : son chemin et, si tu travailles dans la conversation (pas sur son Mac), le fichier joint. Rien d'autre en pièce jointe.
+- Ne génère **que le MP3** : pas de WAV, pas de batterie seule, pas de pistes solo tant qu'il ne les demande pas.
+- Dans la réponse, donne **uniquement le MP3 final** (`<titre>_vN_<style>.mp3`), joint si les fichiers ont été déposés dans la conversation. Rien d'autre en pièce jointe.
 - Accompagne-le d'un **diagnostic rapide** (3 à 5 puces courtes, sans chiffres superflus) pour qu'il sache ce que tu as modifié : les problèmes trouvés et ce que tu as fait (ex. « résonance de la caisse claire vers 340 Hz, qui vient du fût → coupée en EQ étroite », « grosse caisse en retard sur les overheads → recalée »), plus ce que tu as appliqué de ses goûts appris s'il y en a (« J'ai gardé la caisse claire plus claquante, comme tu aimes »). Pour une v2, v3…, ne liste que ce qui a changé depuis la version précédente.
-- Termine par une ligne du type : « Si tu veux les fichiers annexes (WAV, batterie seule, pistes solo, réglages Logic…), demande-les-moi. Sinon, ce MP3 est la version finale. Et si quelque chose ne te plaît pas, dis-moi simplement "plus de ci, moins de ça". »
+- Ajoute une ligne du type : « Si tu veux les fichiers annexes (WAV, batterie seule, pistes solo, réglages Logic…), demande-les-moi. Sinon, ce MP3 est la version finale. Et si quelque chose ne te plaît pas, dis-moi simplement "plus de ci, moins de ça". »
+- Termine par le chemin du dossier : « Tes résultats sont dans : `<dossier des pistes>/version mixée/` ».
 - Pas de mesures détaillées, pas de réglages Logic, sauf s'il les demande. Si un contrôle a échoué (règle d'or, vitesse du playback), explique-le en tête du diagnostic.
 - **Ne génère pas de rapport `.md` à ce stade** : il n'est écrit qu'à la validation (section 6).
 
-S'il réclame les annexes, donne-lui ce qu'il demande depuis le dossier de sortie : WAV, batterie seule, pistes solo, mesures détaillées, ou **réglages Logic piste par piste** (Sample Delay, Channel EQ, compresseur, panoramiques, niveaux).
+S'il réclame les annexes, **génère alors seulement** ce qu'il demande, range-le dans `version mixée` et rappelle le chemin : WAV, batterie seule, pistes solo, mesures détaillées, ou **réglages Logic piste par piste** (Sample Delay, Channel EQ, compresseur, panoramiques, niveaux).
 
 ## 6. Apprendre des retours
 Chaque retour du batteur sert aux mix suivants, pas seulement au morceau en cours. La mémoire, c'est `~/Music/DrumMix/profile.yaml` (champ `preferences.learned`) et `~/Music/DrumMix/journal.md`.
@@ -100,7 +102,7 @@ Chaque retour du batteur sert aux mix suivants, pas seulement au morceau en cour
 5. Dis-le-lui en une ligne : « Noté, je le garde pour les prochains mix. »
 
 **Quand il valide** (« c'est bon », « parfait ») :
-- génère alors **seulement** `<titre>_report.md` dans le sous-dossier du morceau, pour la version validée : diagnostic complet et mesures, réglages finaux piste par piste, réglages Logic, réduction de gain du limiteur, retours appliqués version par version, et une option à essayer pour un prochain morceau. **Ne le lui envoie pas** et ne le joins pas : dis-lui juste en une ligne qu'il est rangé dans le dossier s'il en a besoin ;
+- génère alors **seulement** `<titre>_report.md` dans `version mixée`, pour la version validée : diagnostic complet et mesures, réglages finaux piste par piste, réglages Logic, réduction de gain du limiteur, retours appliqués version par version, et une option à essayer pour un prochain morceau. **Ne le lui envoie pas** et ne le joins pas : dis-lui juste en une ligne qu'il est rangé dans `version mixée` (avec le chemin) s'il en a besoin ;
 - note dans `journal.md` le morceau, la version retenue et les réglages finaux. Une version validée sert de référence pour les morceaux suivants du même style.
 
 **Au début de chaque mix**, applique tous les goûts de `preferences.learned` au preset de départ, pour que la v1 soit déjà proche de ce qu'il aime. S'il demande « oublie ça » ou « reviens au son de base », retire l'entrée concernée.
